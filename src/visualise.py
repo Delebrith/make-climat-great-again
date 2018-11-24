@@ -1,10 +1,8 @@
 import sys
 
-import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.misc import imread
-import matplotlib.cbook as cbook
 
 from src.point import load_from_csv
 
@@ -75,12 +73,16 @@ def main():
     if len(sys.argv) != 2:
         exit("Invalid argument number. Required: .csv file name with points")
 
-    matplotlib.use('Qt5Agg')
-
     points = load_from_csv(sys.argv[1])
 
     min_regression = min(points, key=lambda p: p.regression).regression
     max_regression = max(points, key=lambda p: p.regression).regression
+    avg_regression = sum([p.regression for p in points]) / len(points)
+
+    print("Minimal regression coefficent in data: {}".format(min_regression))
+    print("Maximal regression coefficent in data: {}".format(max_regression))
+    print("Average regression coefficent in data: {}".format(avg_regression))
+    print("Number of data points: {}".format(len(points)))
 
     def regression_color_mapper(point):
         range_ = max_regression - min_regression
