@@ -3,7 +3,7 @@ import sys
 import matplotlib
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-from mpl_toolkits.basemap import Basemap
+import plotly.plotly as py
 import numpy as np
 
 from src.point import load_from_csv
@@ -45,13 +45,10 @@ def _visualise_on_sphere(points, colors):
 
 
 def _visualise_as_map(points, colors):
-    m = Basemap(projection='hammer')
-    longitudes, latitudes = zip(*[(p.longitude, p.latitude) for p in points])
-    xx, yy = m(longitudes, latitudes)
-    m.drawmapboundary(fill_color='#99ffff')
-    m.fillcontinents(color='#cc9966',lake_color='#99ffff')
-    m.scatter(xx, yy, 3, marker='o', color=colors)
+    xx = [-p.longitude / 180 for p in points]
+    yy = [p.latitude / 90 for p in points]
 
+    plt.scatter(xx, yy, c=colors)
     plt.show()
 
 
