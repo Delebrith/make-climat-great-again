@@ -2,9 +2,9 @@ import sys
 
 import matplotlib
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-import plotly.plotly as py
 import numpy as np
+from scipy.misc import imread
+import matplotlib.cbook as cbook
 
 from src.point import load_from_csv
 
@@ -46,7 +46,10 @@ def _visualise_on_sphere(points, colors):
 
 def _visualise_as_map(points, colors):
     xx = [-p.longitude / 180 for p in points]
-    yy = [p.latitude / 90 for p in points]
+    yy = [0.5 + p.latitude / 180 for p in points]
+
+    img = imread("src/resource/equidstant-projection.jpg")
+    plt.imshow(img, zorder=0, extent=[-1., 1., 0., 1.])
 
     plt.scatter(xx, yy, c=colors)
     plt.show()
