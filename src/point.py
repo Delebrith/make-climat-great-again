@@ -22,7 +22,7 @@ def _geo_coord_str_to_float(str_, positive, negative):
     if str_.endswith(positive):
         return float(str_[:-len(positive)])
     elif str_.endswith(negative):
-        return -float(str_[:len(negative)])
+        return -float(str_[:-len(negative)])
     else:
         return float(str_)
 

@@ -2,4 +2,4 @@ pandas>=0.23.4
 numpy>=1.10.0
 scipy>=1.1.0
 matplotlib
-https://github.com/matplotlib/basemap/archive/v1.1.0.zip
+plotly
