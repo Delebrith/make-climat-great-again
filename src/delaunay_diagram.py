@@ -1,4 +1,5 @@
 import scipy.spatial
+import spherical_geometry.polygon as geom
 
 
 class DelaunayDiagram:
@@ -11,12 +12,12 @@ class DelaunayDiagram:
     """
 
     def __init__(self, points):
-        cartesian_points = [p.get_cartesian_coordinates(0, 1) for p in points]
+        cartesian_points = [p.get_cartesian_coordinates([0, 0, 0], 1) for p in points]
         delaunay = scipy.spatial.ConvexHull(cartesian_points)
 
         self.neighbours = {p: set() for p in points}
         self.neighbours_making_triangles = {}
-        self.triangles = set()
+        self.triangles = {}
 
         for simplice in delaunay.simplices:
             pts = [points[v] for v in simplice]
@@ -46,9 +47,13 @@ class DelaunayDiagram:
                 self.neighbours_making_triangles[(pts[2], pts[1])] = set()
             self.neighbours_making_triangles[(pts[2], pts[1])].add(pts[0])
 
-            self.triangles.add((pts[0], pts[1], pts[2]))
-            self.triangles.add((pts[0], pts[2], pts[1]))
-            self.triangles.add((pts[1], pts[0], pts[2]))
-            self.triangles.add((pts[1], pts[2], pts[0]))
-            self.triangles.add((pts[2], pts[0], pts[1]))
-            self.triangles.add((pts[2], pts[1], pts[0]))
+            triangle_area = geom.SphericalPolygon(
+                [p.get_cartesian_coordinates([0, 0, 0], 1) for p in pts],
+                [0, 0, 0]).area()
+
+            self.triangles[(pts[0], pts[1], pts[2])] = triangle_area
+            self.triangles[(pts[0], pts[2], pts[1])] = triangle_area
+            self.triangles[(pts[1], pts[0], pts[2])] = triangle_area
+            self.triangles[(pts[1], pts[2], pts[0])] = triangle_area
+            self.triangles[(pts[2], pts[0], pts[1])] = triangle_area
+            self.triangles[(pts[2], pts[1], pts[0])] = triangle_area

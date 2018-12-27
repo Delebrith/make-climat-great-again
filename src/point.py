@@ -11,9 +11,9 @@ class Point:
         self.label = label
 
     def get_cartesian_coordinates(self, center, radius):
-        x = center[0] + radius * np.cos(self.latitude) * np.sin(self.longitude)
-        y = center[1] + radius * np.cos(self.latitude) * np.cos(self.longitude)
-        z = center[2] + radius * np.sin(self.latitude)
+        x = center[0] + radius * np.cos(self.latitude * np.pi / 180) * np.sin(self.longitude * np.pi / 180)
+        y = center[1] + radius * np.cos(self.latitude * np.pi / 180) * np.cos(self.longitude * np.pi / 180)
+        z = center[2] + radius * np.sin(self.latitude * np.pi / 180)
 
         return x, y, z
 
