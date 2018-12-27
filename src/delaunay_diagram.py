@@ -8,7 +8,7 @@ class DelaunayDiagram:
      - neighbours: dictionary that for each point holds a set of points that are its neighbours
      - neighbours_making_triangles: for each neighbouring points returns a set of points that make are common neighbour
        with the two making the key
-     - triangles: a set of tuples of points making triangles
+     - triangles: a dictionary that for tuples of points contains triangle areas
     """
 
     def __init__(self, points):
