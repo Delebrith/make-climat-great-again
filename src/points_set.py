@@ -5,6 +5,7 @@ class PointsSet:
 
         self._triangles = set()
 
+        self._points_to_add = set()
         potential_points_to_add = set(delaunay_diagram.neighbours[initial_point])
         for p in potential_points_to_add:
             if p.regression > minimal_regression:
