@@ -1,13 +1,18 @@
 class PointsSet:
-    def __init__(self, delaunay_diagram, initial_point, minimal_point_density):
+    def __init__(self, delaunay_diagram, initial_point, minimal_point_density, minimal_regression):
         self._delaunay = delaunay_diagram
         self._points = {initial_point}
 
         self._triangles = set()
 
-        self._points_to_add = set(delaunay_diagram.neighbours[initial_point])
+        potential_points_to_add = set(delaunay_diagram.neighbours[initial_point])
+        for p in potential_points_to_add:
+            if p.regression > minimal_regression:
+                self._points_to_add.add(p)
+
         self._points_to_remove = set()
 
+        self._minimal_regression = minimal_regression
         self._minimal_point_density = minimal_point_density
         self._area = 0
 
@@ -58,8 +63,8 @@ class PointsSet:
 
         for p in self._delaunay.neighbours[point].intersection(self._points):
             for m in self._delaunay.neighbours_making_triangles[(point, p)]:
-                if m not in self._points:
-                    self._points_to_add.add(m)
+                if m not in self._points and m.regression > self._minimal_regression:
+                        self._points_to_add.add(m)
                 else:
                     triangle = self._delaunay.triangles[(point, p, m)]
                     self._triangles.add(triangle)
@@ -81,7 +86,10 @@ class PointsSet:
         self._area -= sum(t.area for t in removed_triangles)
 
         if len(self._points) == 1:
-            self._points_to_add = set(self._delaunay.neighbours[self._points.__iter__().__next__()])
+            potential_points_to_add = set(self._delaunay.neighbours[self._points.__iter__().__next__()])
+            for p in potential_points_to_add:
+                if p.regression > self._minimal_regression:
+                    self._points_to_add.add(p)
 
         else:
             for p in self._delaunay.neighbours[point].intersection(self._points_to_add):
