@@ -137,3 +137,7 @@ class PointsSet:
     @property
     def points(self):
         return self._points
+
+    @property
+    def has_minimal_density(self):
+        return len(self._points) >= self._minimal_point_density * self._area
