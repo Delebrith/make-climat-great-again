@@ -5,7 +5,7 @@ import numpy as np
 class Point:
     def __init__(self, latitude, longitude, regression=0, label=""):
         self.latitude = _geo_coord_str_to_float(latitude, 'N', 'S') if type(latitude) is str else float(latitude)
-        self.longitude = _geo_coord_str_to_float(longitude, 'W', 'E') if type(longitude) is str else float(longitude)
+        self.longitude = _geo_coord_str_to_float(longitude, 'E', 'W') if type(longitude) is str else float(longitude)
 
         self.regression = float(regression)
         self.label = label
