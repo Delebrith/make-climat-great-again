@@ -22,7 +22,7 @@ def main():
     if len(sys.argv) == 4:
         cities_file = sys.argv[3]
         cities_data_frame = pandas.read_csv(cities_file, usecols=["AccentCity", "Latitude", "Longitude"])
-        data_by_location = data_by_location.apply(cities_location, axis=1, cities_data_frame=cities_data_frame)
+        data_by_location = data_by_location.apply(fix_cities_location, axis=1, cities_data_frame=cities_data_frame)
 
     data_by_location.drop_duplicates(subset=["Latitude", "Longitude"])
     data_by_location.to_csv(output_file, header=True)
@@ -41,7 +41,7 @@ def temperature_series_to_regression(temperatures: pandas.Series):
     return pandas.Series(regression, index=["Regression"])
 
 
-def cities_location(data_by_location, cities_data_frame):
+def fix_cities_location(data_by_location, cities_data_frame):
     results = cities_data_frame.loc[cities_data_frame['AccentCity'].str.lower() == data_by_location['City'].lower()]
     if results.shape[0] > 0:
         if results.shape[0] != 1:
@@ -62,13 +62,6 @@ def cities_location(data_by_location, cities_data_frame):
         print("{}: no results".format(data_by_location['City']))
 
     return data_by_location
-
-
-def dist(data1, data2):
-    lat1 = data1['Latitude']
-    lon1 = data1['Longitude']
-    lat2 = data2['Latitude']
-    lon2 = data2['Longitude']
 
 
 def map_date(date_string):
