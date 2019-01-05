@@ -17,6 +17,27 @@ class Point:
 
         return x, y, z
 
+    def dist(self, point):
+        """
+        :param point: a Point
+        :return: a Haversine distance between points in radians
+        """
+        lat1 = self.latitude * np.pi / 180
+        lon1 = self.longitude * np.pi / 180
+        lat2 = point.latitude * np.pi / 180
+        lon2 = point.longitude * np.pi / 180
+
+        dlat = lat2 - lat1
+        dlon = lon2 - lon1
+
+        a = np.sin(dlat / 2) ** 2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon / 2) ** 2
+        return 2 * np.arcsin(np.sqrt(a))
+
+    def __str__(self):
+        return "{}\t{}\t{}".format(
+            self.label,
+            _geo_coord_float_to_str(self.latitude, 'N', 'S'),
+            _geo_coord_float_to_str(self.longitude, 'E', 'W'))
 
 def _geo_coord_str_to_float(str_, positive, negative):
     if str_.endswith(positive):
@@ -27,7 +48,12 @@ def _geo_coord_str_to_float(str_, positive, negative):
         return float(str_)
 
 
+def _geo_coord_float_to_str(coord, positive, negative):
+    return str(abs(coord)) + (positive if coord >= 0 else negative)
+
+
 def load_from_csv(filename):
     dataframe = pandas.read_csv(filename)
 
     return [Point(row['Latitude'], row['Longitude'], row['Regression'], row['City']) for _, row in dataframe.iterrows()]
+
