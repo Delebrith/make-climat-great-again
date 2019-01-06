@@ -1,9 +1,18 @@
+import numpy as np
 import scipy.spatial
 import spherical_geometry.polygon as geom
+
+import sys
+
+import src.point as point
+
+from statistics import median
 
 
 class Triangle:
     def __init__(self, area, corners):
+        if 2 * np.pi < area < 4 * np.pi:
+            area = 4 * np.pi - area
         self.area = area
         self.adjacent = set()
         self.points = corners
@@ -87,3 +96,26 @@ class DelaunayDiagram:
             self.triangles_by_points[pts[0]].add(triangle)
             self.triangles_by_points[pts[1]].add(triangle)
             self.triangles_by_points[pts[2]].add(triangle)
+
+
+if __name__ == "__main__":
+    # print delaunay diagram's statistics for the first argument
+    input_file = sys.argv[1]
+    points = point.load_from_csv(input_file)
+
+    delaunay = DelaunayDiagram(points)
+    triangles = len(delaunay.triangles) / 6
+    total_area = sum(t.area for t in delaunay.triangles.values()) / 6
+    average_area = total_area / triangles
+    median_area = median(t.area for t in delaunay.triangles.values())
+    max_area = max(t.area for t in delaunay.triangles.values())
+    min_area = min(t.area for t in delaunay.triangles.values())
+
+    print("""
+    Total triangles: {}
+    Total area: {} (Theoretical: 4 * pi = 12.566)
+    Max area: {}
+    Min area: {}
+    Average area: {}
+    Median area: {}
+    """.format(triangles, total_area, max_area, min_area, average_area, median_area))
