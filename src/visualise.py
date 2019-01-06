@@ -43,7 +43,7 @@ def _visualise_on_sphere(points, colors):
 
 
 def _visualise_as_map(points, colors):
-    xx = [-p.longitude / 180 for p in points]
+    xx = [p.longitude / 180 for p in points]
     yy = [0.5 + p.latitude / 180 for p in points]
 
     img = imread("src/resource/equidstant-projection.jpg")
