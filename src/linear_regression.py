@@ -22,9 +22,12 @@ def main():
     if len(sys.argv) == 4:
         cities_file = sys.argv[3]
         cities_data_frame = pandas.read_csv(cities_file, usecols=["AccentCity", "Latitude", "Longitude"])
+        cities_data_frame = cities_data_frame\
+            .assign(acccity=lambda df: df['AccentCity'].str.lower())\
+            .set_index('acccity')
         data_by_location = data_by_location.apply(fix_cities_location, axis=1, cities_data_frame=cities_data_frame)
 
-    data_by_location.drop_duplicates(subset=["Latitude", "Longitude"])
+    data_by_location = data_by_location.drop_duplicates(subset=["Latitude", "Longitude"])
     data_by_location.to_csv(output_file, header=True)
 
     points = point.load_from_csv(output_file)
@@ -42,8 +45,9 @@ def temperature_series_to_regression(temperatures: pandas.Series):
 
 
 def fix_cities_location(data_by_location, cities_data_frame):
-    results = cities_data_frame.loc[cities_data_frame['AccentCity'].str.lower() == data_by_location['City'].lower()]
-    if results.shape[0] > 0:
+    city = data_by_location['City'].lower()
+    if city in cities_data_frame.index:
+        results = cities_data_frame.loc[[city]]
         if results.shape[0] != 1:
             print("{}: {} results".format(data_by_location['City'], results.shape[0]))
             orig = point.Point(data_by_location['Latitude'], data_by_location['Longitude'])
