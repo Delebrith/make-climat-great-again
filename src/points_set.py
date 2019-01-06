@@ -118,7 +118,7 @@ class PointsSet:
 
     def value_with_removed(self, point):
         area = self._area - sum(
-            t.area for t in self._delaunay.triangles_by_points[point].intersect(self._triangles))
+            t.area for t in self._delaunay.triangles_by_points[point].intersection(self._triangles))
 
         return self._get_value(len(self._points) - 1, area)
 
