@@ -15,7 +15,7 @@ class SimulatedAnnealing:
         self._time_to_stop = False
         signal.signal(signal.SIGINT, self.__signal_handler)
 
-        self._max_area = 0
+        self._max_value = 0
 
         random.seed(a=seed)
 
@@ -58,15 +58,18 @@ class SimulatedAnnealing:
         self._temperature = self._temperature * math.pow(0.99, self._iterations)
 
     def calculate(self):
+        best_points = set()
         self.log()
         while self._iterations < self._max_iterations and not self._time_to_stop:
             self._next_iteration()
-            if self._points_set.value > self._max_area:
-                self._max_area = self._points_set.value
+            if self._points_set.has_minimal_density and self._points_set.value > self._max_value:
+                self._max_value = self._points_set.value
+                best_points = set(self._points_set.points)
             self.log()
-        return self._points_set
+        return self._points_set, best_points
 
     def log(self):
-        print("{}/{}:\tArea\t{}\tMax Area\t{}\tMinimal Density\t{}\tDensity\t{}"
-              .format(self._iterations, self._max_iterations, self._points_set.value, self._max_area,
-                      self._points_set._minimal_point_density, self._points_set.value / len(self._points_set.points)))
+        print("{}/{}:\tArea\t{}\tValue\t{}\tMax Value\t{}\tMinimal Density\t{}\tDensity\t{}"
+              .format(self._iterations, self._max_iterations, self._points_set.area,
+                      self._points_set.value, self._max_value, self._points_set._minimal_point_density,
+                      len(self._points_set.points) / self._points_set.area if self._points_set.area > 0 else 0))

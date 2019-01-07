@@ -31,8 +31,13 @@ def main():
                            minimal_regression=float(args.minimal_regression))
     simulated_annealing = SimulatedAnnealing(points_set=points_set, temperature=float(args.temperature),
                                              max_iterations=int(args.max_iterations), seed=int(args.seed))
-    result = simulated_annealing.calculate()
+    result, best = simulated_annealing.calculate()
+    print()
+    print("Final result ({}) points:".format(len(result.points)))
     print(*result.points, sep=",\n")
+    print()
+    print("Best result ({}) points:".format(len(best)))
+    print(*best, sep=",\n")
 
 
 def _initiate(points):
