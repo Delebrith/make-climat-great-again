@@ -13,6 +13,7 @@ class PointsSet:
         self._minimal_regression = minimal_regression
         self._minimal_point_density = minimal_point_density
         self._area = 0
+        self._value = 0
 
     def _can_remove(self, point):
         if len(self._points) == 1:
@@ -59,16 +60,21 @@ class PointsSet:
         else:
             self._points_to_add.remove(point)
 
+        new_triangles = set()
         for p in self._delaunay.neighbours[point].intersection(self._points):
             for m in self._delaunay.neighbours_making_triangles[(point, p)]:
-                if m not in self._points and m.regression > self._minimal_regression:
+                if m not in self._points:
+                    if m.regression > self._minimal_regression:
                         self._points_to_add.add(m)
                 else:
                     triangle = self._delaunay.triangles[(point, p, m)]
-                    self._triangles.add(triangle)
-                    self._area += triangle.area
+                    new_triangles.add(triangle)
+
+        self._area += sum(t.area for t in new_triangles)
+        self._triangles.update(new_triangles)
 
         self._points_to_remove = {p for p in self._points if self._can_remove(p)}
+        self._value = self._get_value(len(self._points), self._triangles)
 
     def remove_point(self, point):
         """
@@ -97,25 +103,37 @@ class PointsSet:
             self._points_to_add.add(point)
 
         self._points_to_remove = {p for p in self._points if self._can_remove(p)}
+        self._value = self._get_value(len(self._points), self._triangles)
 
-    def _get_value(self, points_n, area):
-        if area == 0:
+    def _get_value(self, points_n, triangles):
+        if len(triangles) == 0:
             return 0
-        density = (points_n / area)
 
-        return area if density >= self._minimal_point_density else (self._minimal_point_density / density)**2 * area
+        area = sum(t.area for t in triangles)
+        max_area = points_n / self._minimal_point_density
+
+        if area <= max_area:
+            return area
+
+        area = 0
+        for t in sorted(triangles, key=lambda t: t.area):
+            if area + t.area <= max_area:
+                area += t.area
+            else:
+                area -= t.area
+
+        return area
 
     def value_with_added(self, point):
-        area = self._area + sum(
-            t.area for t in self._delaunay.triangles_by_points[point] if t.points.issubset(self._points))
+        triangles = self._triangles.union(
+            t for t in self._delaunay.triangles_by_points[point] if t.points.issubset(self._points))
 
-        return self._get_value(len(self._points) - 1, area)
+        return self._get_value(len(self._points) + 1, triangles)
 
     def value_with_removed(self, point):
-        area = self._area - sum(
-            t.area for t in self._delaunay.triangles_by_points[point].intersection(self._triangles))
+        triangles = self._triangles - self._delaunay.triangles_by_points[point]
 
-        return self._get_value(len(self._points) - 1, area)
+        return self._get_value(len(self._points) - 1, triangles)
 
     @property
     def points_to_add(self):
@@ -127,7 +145,7 @@ class PointsSet:
 
     @property
     def value(self):
-        return self._get_value(len(self._points), self._area)
+        return self._value
 
     @property
     def points(self):
@@ -136,3 +154,7 @@ class PointsSet:
     @property
     def has_minimal_density(self):
         return len(self._points) >= self._minimal_point_density * self._area
+
+    @property
+    def area(self):
+        return self._area
