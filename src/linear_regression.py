@@ -1,5 +1,6 @@
 import sys
 from datetime import datetime
+import statistics
 
 import pandas
 from scipy.stats import linregress
@@ -21,7 +22,8 @@ def main():
 
     if len(sys.argv) == 4:
         cities_file = sys.argv[3]
-        cities_data_frame = pandas.read_csv(cities_file, usecols=["AccentCity", "Latitude", "Longitude"])
+        cities_data_frame = pandas.read_csv(cities_file, usecols=["AccentCity", "Latitude", "Longitude"],
+                                            encoding="ISO-8859-1")
         cities_data_frame = cities_data_frame\
             .assign(acccity=lambda df: df['AccentCity'].str.lower())\
             .set_index('acccity')
@@ -35,6 +37,9 @@ def main():
     unique_locations = set(locations)
 
     print("Points: {}, Unique points: {}".format(len(locations), len(unique_locations)))
+
+    median, mean = count_stats(data_by_location)
+    print("Average regression: {}, median: {}".format(mean, median))
 
 
 def temperature_series_to_regression(temperatures: pandas.Series):
@@ -70,6 +75,12 @@ def fix_cities_location(data_by_location, cities_data_frame):
 
 def map_date(date_string):
     return datetime.strptime(date_string, "%Y-%M-%d").year
+
+
+def count_stats(data):
+    median = statistics.median(data['Regression'])
+    mean = statistics.mean(data['Regression'])
+    return median, mean
 
 
 if __name__ == '__main__':
