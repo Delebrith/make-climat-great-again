@@ -9,6 +9,7 @@ class SimulatedAnnealing:
     def __init__(self, points_set: PointsSet, temperature=1.0, max_iterations=100000, seed=1):
         self._points_set = points_set
         self._temperature = temperature
+        self._t0 = temperature
 
         self._max_iterations = max_iterations
         self._iterations = 0
@@ -55,7 +56,7 @@ class SimulatedAnnealing:
                 self._points_set.remove_point(point)
 
         # similar to built-in mathlab way for simulated annealing
-        self._temperature = self._temperature * math.pow(0.99, self._iterations)
+        self._temperature = self._t0 * math.pow(0.95, self._iterations)
 
     def calculate(self):
         best_points = set()
