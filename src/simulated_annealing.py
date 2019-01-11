@@ -1,5 +1,7 @@
 from src.points_set import PointsSet
 
+import pandas as pd
+
 import random
 import math
 import signal
@@ -18,6 +20,9 @@ class SimulatedAnnealing:
 
         self._max_value = 0
 
+        self._history = pd.DataFrame(columns=list(['area', 'value', 'max_value']))
+
+        self._seed = seed
         random.seed(a=seed)
 
     def __signal_handler(self, signal, frame):
@@ -74,3 +79,11 @@ class SimulatedAnnealing:
               .format(self._iterations, self._max_iterations, self._points_set.area,
                       self._points_set.value, self._max_value, self._points_set._minimal_point_density,
                       len(self._points_set.points) / self._points_set.area if self._points_set.area > 0 else 0))
+        self._history = self._history.append({'area': self._points_set.area,
+                                              'value': self._points_set.value,
+                                              'max_value': self._max_value},
+                                             ignore_index=True)
+
+    def save_history(self):
+        self._history.to_csv('../out/t-{}-s-{}.csv'.format(self._t0, self._seed))
+

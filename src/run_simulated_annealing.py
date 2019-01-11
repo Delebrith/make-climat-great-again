@@ -32,6 +32,8 @@ def main():
     simulated_annealing = SimulatedAnnealing(points_set=points_set, temperature=float(args.temperature),
                                              max_iterations=int(args.max_iterations), seed=int(args.seed))
     result, best = simulated_annealing.calculate()
+    simulated_annealing.save_history()
+
     print()
     print("Final result ({}) points:".format(len(result.points)))
     print(*result.points, sep=",\n")
