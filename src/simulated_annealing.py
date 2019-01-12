@@ -38,9 +38,7 @@ class SimulatedAnnealing:
         adding_probability = len(self._points_set.points_to_add) / (len(self._points_set.points_to_add)
                                                                     + len(self._points_set.points_to_remove))
 
-        rand = random.random()
-        
-        if rand <= adding_probability:
+        if random.random() <= adding_probability:
             # select point to add
             point = random.sample(self._points_set.points_to_add, 1)[0]
 
