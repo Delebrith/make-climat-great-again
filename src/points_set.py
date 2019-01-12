@@ -35,7 +35,7 @@ class PointsSet:
         # check left triangles consistency
         triangles_to_reach = {t for t in self._triangles if point not in t.points}
 
-        reached = [triangles_to_reach.pop()]
+        reached = [triangles_to_reach.pop()] if len(triangles_to_reach) > 0 else []
 
         while len(reached) > 0:
             triangle = reached.pop()

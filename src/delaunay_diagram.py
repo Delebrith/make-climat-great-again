@@ -119,4 +119,4 @@ if __name__ == "__main__":
     Average area: {}
     Median area: {}
     Density: {}
-    """.format(triangles, total_area, max_area, min_area, average_area, median_area, total_area/len(points)))
+    """.format(triangles, total_area, max_area, min_area, average_area, median_area, len(points)/total_area))
