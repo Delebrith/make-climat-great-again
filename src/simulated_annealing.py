@@ -39,11 +39,11 @@ class SimulatedAnnealing:
                                                                     + len(self._points_set.points_to_remove))
 
         rand = random.random()
-        print(rand, len(self._points_set.points_to_add) + len(self._points_set.points_to_remove), adding_probability)
+        
         if rand <= adding_probability:
             # select point to add
             point = random.sample(self._points_set.points_to_add, 1)[0]
-            print(hash(point), point, sep=' ')
+
             old_value = self._points_set.value
             new_value = self._points_set.value_with_added(point)
 
@@ -55,7 +55,7 @@ class SimulatedAnnealing:
         else:
             # select point to remove
             point = random.sample(self._points_set.points_to_remove, 1)[0]
-            print(hash(point), point, sep=' ')
+
             old_value = self._points_set.value
             new_value = self._points_set.value_with_removed(point)
 

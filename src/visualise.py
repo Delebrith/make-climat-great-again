@@ -46,7 +46,7 @@ def _visualise_as_map(points, colors):
     xx = [p.longitude / 180 for p in points]
     yy = [0.5 + p.latitude / 180 for p in points]
 
-    img = imread("src/resource/equidstant-projection.jpg")
+    img = imread("D:\\projects\\make-climate-great-again\\src\\resource\\equidstant-projection.jpg")
     plt.imshow(img, zorder=0, extent=[-1., 1., 0., 1.])
 
     plt.scatter(xx, yy, c=colors)
