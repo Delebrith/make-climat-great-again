@@ -39,6 +39,9 @@ class Point:
             _geo_coord_float_to_str(self.latitude, 'N', 'S'),
             _geo_coord_float_to_str(self.longitude, 'E', 'W'))
 
+    def __hash__(self):
+        return hash(self.label) ^ hash(self.latitude) ^ hash(self.longitude)
+
 def _geo_coord_str_to_float(str_, positive, negative):
     if str_.endswith(positive):
         return float(str_[:-len(positive)])

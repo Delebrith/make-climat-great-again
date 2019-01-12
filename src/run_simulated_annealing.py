@@ -25,7 +25,7 @@ def main():
               for p in points_df.iterrows()]
 
     delaunay_diagram = DelaunayDiagram(points=points)
-    starting_point = _initiate(points)
+    starting_point = initiate(points, args.seed, args.minimal_regression)
     points_set = PointsSet(delaunay_diagram=delaunay_diagram, initial_point=starting_point,
                            minimal_point_density=float(args.minimal_density),
                            minimal_regression=float(args.minimal_regression))
@@ -42,11 +42,11 @@ def main():
     print(*best, sep=",\n")
 
 
-def _initiate(points):
-    random.seed(a=args.seed)
+def initiate(points, seed, minimal_regression):
+    random.seed(a=seed)
     while True:
         point = random.choice(points)
-        if point.regression > float(args.minimal_regression):
+        if point.regression > float(minimal_regression):
             return point
 
 

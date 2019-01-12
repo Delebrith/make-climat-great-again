@@ -23,7 +23,7 @@ class SimulatedAnnealing:
         self._history = pd.DataFrame(columns=list(['area', 'value', 'max_value']))
 
         self._seed = seed
-        random.seed(a=seed)
+        # random.seed(a=seed)
 
     def __signal_handler(self, signal, frame):
         print('Algorithm manually stopped.')
@@ -38,9 +38,12 @@ class SimulatedAnnealing:
         adding_probability = len(self._points_set.points_to_add) / (len(self._points_set.points_to_add)
                                                                     + len(self._points_set.points_to_remove))
 
-        if random.random() <= adding_probability:
+        rand = random.random()
+        print(rand, len(self._points_set.points_to_add) + len(self._points_set.points_to_remove), adding_probability)
+        if rand <= adding_probability:
             # select point to add
             point = random.sample(self._points_set.points_to_add, 1)[0]
+            print(hash(point), point, sep=' ')
             old_value = self._points_set.value
             new_value = self._points_set.value_with_added(point)
 
@@ -52,6 +55,7 @@ class SimulatedAnnealing:
         else:
             # select point to remove
             point = random.sample(self._points_set.points_to_remove, 1)[0]
+            print(hash(point), point, sep=' ')
             old_value = self._points_set.value
             new_value = self._points_set.value_with_removed(point)
 
@@ -87,3 +91,6 @@ class SimulatedAnnealing:
     def save_history(self):
         self._history.to_csv('../out/t-{}-s-{}.csv'.format(self._t0, self._seed))
 
+    @property
+    def history(self):
+        return self._history
